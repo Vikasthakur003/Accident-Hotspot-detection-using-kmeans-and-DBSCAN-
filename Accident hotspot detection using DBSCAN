@@ -1,0 +1,48 @@
+## this code is based on machine model that predict the accident hotspot detection using DBSCAN 
+
+import pandas as pd
+import numpy as np
+from sklearn.cluster import DBSCAN
+import matplotlib.pyplot as plt
+
+data = {
+    "latitude":  [28.61, 28.62, 28.63, 28.60, 28.61,
+                  19.07, 19.08, 19.09, 19.07,
+                  35.20],  
+    "longitude": [77.20, 77.21, 77.19, 77.18, 77.22,
+                  72.87, 72.88, 72.86, 72.89,
+                  75.80]
+}
+
+df = pd.DataFrame(data)
+# print(df)
+
+X = df[["latitude","longitude"]]
+
+dbscan = DBSCAN(eps = 0.03,min_samples = 3)
+df["clusters"] = dbscan.fit_predict(X)
+
+cluster_label = {
+    0 : "high",
+    1 : "Low",
+    -1 : "Random/Rare"
+}
+
+df["Risk Level"] = df["clusters"].map(cluster_label)
+
+print(df)
+# print(df["Risk Level"])
+
+# print(df["clusters"].value_counts())
+
+#visualisation 
+plt.figure(figsize = (5,4))
+plt.scatter(df["latitude"],df["longitude"],c = df["clusters"],cmap = "viridis")
+plt.xlabel("latitude")
+plt.ylabel("longitude")
+plt.title("Accident Hotspot detection using DBSCAN ")
+plt.grid(True)
+plt.show()
+
+
+
